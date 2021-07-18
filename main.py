@@ -71,7 +71,8 @@ error_data = {
     "replacenofun": "You do not have permission to replace the function.",
     "notargument": "Not enough arguments are required by the function.",
     "notline": "The line does not exist.",
-    "ifnotfun": "Only one function can be described as the execution content of the if statement."
+    "ifnotfun": "Only one function can be described as the execution content of the if statement.",
+    "varstraddnot": "You cannot add letters to letters."
 }
 # Bad Variable
 BAD_VAR_NAME = []
@@ -173,6 +174,42 @@ try:
                             error("v", "varnotvalue", "not")
                     else:
                         error("v", "varmulti", "not")
+                elif imp_text[1] == "+=":
+                    if not len(imp_text) > 3:
+                        VAR_NAME = imp_text[0]
+                        p3 = imp_text[2]
+                        imp_text_sub = p3[:-1]
+                        VAR_CONTENT = imp_text_sub
+                        if VAR_NAME in BAD_VAR_NAME:
+                            error("e", "replacenovar", VAR_NAME)
+                        try:
+                            try:
+                                i = 0
+                                var_list = list(imp_var)
+                                var_dlist = imp_var.values()
+                                var_dlist = list(var_dlist)
+                                while i < len(imp_var):
+                                    if var_list[i] in VAR_CONTENT:
+                                        replace_text = var_dlist[i]
+                                        VAR_CONTENT = VAR_CONTENT.replace(
+                                            '(' + var_list[i] + ')', replace_text)
+                                    i += 1
+                            except KeyError:
+                                error("k", "notvar", VAR_NAME)
+                            try:
+                                imp_var[VAR_NAME] = int(imp_var[VAR_NAME]) + int(eval(VAR_CONTENT))
+                            except ValueError:
+                                error("t", "varstraddnot", "not")
+                            except NameError:
+                                error("k", "notvar", VAR_NAME)
+                            except TypeError:
+                                imp_var[VAR_NAME] = str(imp_var[VAR_NAME])
+                            except KeyError:
+                                var(f"var {VAR_NAME} = {VAR_CONTENT};")
+                        except SyntaxError:
+                            error("v", "varnotvalue", "not")
+                    else:
+                        error("v", "varmulti", "not")                
                 else:
                     error("v", "varnotvalue", "not")
 
